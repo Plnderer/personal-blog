@@ -4,63 +4,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Blog</title>
+    <title>Build Review - Milestone 01 Production | Eric J. Reyes Rivera</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>My Personal Blog</h1>
+            <h1>Build Review Blog Post</h1>
             <div class="metadata">
                 <div class="metadata-item">
-                    <div class="metadata-label">Author</div>
-                    <div class="metadata-value">Plnderer</div>
+                    <span class="metadata-label">Date</span>
+                    <span class="metadata-value">December 2, 2025</span>
                 </div>
                 <div class="metadata-item">
-                    <div class="metadata-label">Status</div>
-                    <div class="metadata-value">Online</div>
+                    <span class="metadata-label">Milestone</span>
+                    <span class="metadata-value">1.12 Milestone - 01 - Production</span>
+                </div>
+                <div class="metadata-item">
+                    <span class="metadata-label">Student</span>
+                    <span class="metadata-value">Eric J. Reyes Rivera</span>
                 </div>
             </div>
         </header>
 
-        <main>
-            <section class="section">
-                <h2>Latest Posts</h2>
+        <section class="section">
+            <h2>1. Introduction</h2>
+            <p>I am Eric J. Reyes Rivera, a Computer Science student at Full Sail University with an AI concentration,
+                and this is my build review for the OrderEasy application. This post outlines the progress made during
+                this milestone, focusing on payment infrastructure, session security, and UI standardization.</p>
+        </section>
 
-                <article class="post-card">
-                    <h3>Hello World</h3>
-                    <div class="metadata-small">
-                        <span class="date">Dec 02, 2025</span>
-                        <span class="tag">General</span>
-                    </div>
-                    <p>Welcome to my new blog! This site is built with a modern glassmorphism aesthetic, featuring a
-                        dark theme with vibrant orange accents. It's hosted directly on GitHub Pages.</p>
-                </article>
+        <section class="section">
+            <h2>2. App Overview</h2>
+            <p>OrderEasy is a multi-restaurant reservation and ordering platform designed to streamline the dining
+                experience. It allows users to browse restaurants, book tables, pre-order meals, and pay securely
+                online. My primary responsibility in this development phase has been focusing on the <strong>Payment
+                    Infrastructure</strong>, <strong>Session Security</strong>, and <strong>UI/UX
+                    Standardization</strong>.</p>
 
-                <article class="post-card">
-                    <h3>Design System</h3>
-                    <div class="metadata-small">
-                        <span class="date">Dec 01, 2025</span>
-                        <span class="tag">Design</span>
-                    </div>
-                    <p>The design of this blog is inspired by the "OrderEasy" application, utilizing a Zinc-900
-                        background, translucent containers, and glowing text effects for a premium feel.</p>
-                </article>
-            </section>
+            <div style="margin-top: 15px;">
+                <span class="badge">Node.js/Express</span>
+                <span class="badge">React/Vite</span>
+                <span class="badge">PostgreSQL</span>
+                <span class="badge">Socket.IO</span>
+                <span class="badge">Stripe API</span>
+            </div>
+        </section>
 
-            <section class="section">
-                <h2>About Me</h2>
-                <p>I'm a developer passionate about building beautiful and functional web applications. This blog serves
-                    as a playground for my ideas and a portfolio of my work.</p>
-            </section>
-        </main>
+        <section class="section">
+            <h2>3. Work Accomplished This Week</h2>
+
+            <h3>A. Stripe Webhook Integration (Backend)</h3>
+            <p>One of the biggest technical achievements this week was implementing robust Stripe Webhooks. Previously,
+                we relied on the client side to confirm payments, which is insecure.</p>
+            <ul>
+                <li>I created a dedicated <code>WebhookController</code> to listen for
+                    <code>payment_intent.succeeded</code> events directly from Stripe.</li>
+                <li>I implemented Signature Verification using <code>express.raw</code> middleware to ensure requests
+                    genuinely come from Stripe.</li>
+                <li>This ensures that even if a user closes their browser immediately after paying, our database still
+                    updates the order status correctly.</li>
+            </ul>
+
+            <h3>B. Session Expiration Handling (Frontend & Backend)</h3>
+            <p>To improve security and user experience, I implemented a global handler for session expiration.</p>
+            <ul>
+                <li>I built a custom <code>fetchWithAuth</code> utility that intercepts <code>401 Unauthorized</code>
+                    responses.</li>
+                <li>It dispatches a system wide event that instantly logs the user out and redirects them to the login
+                    page with a clear message.</li>
+                <li>This prevents users from getting stuck in broken states when their token becomes invalid.</li>
+            </ul>
+
+            <h3>C. UI Standardization & Premium Aesthetic</h3>
+            <p>On the frontend, I focused on standardizing the application's look and feel to match our premium "Night
+                Mode" aesthetic.</p>
+            <ul>
+                <li>I redesigned the Login Page with radial gradients and glassmorphism effects.</li>
+                <li>I refactored the Header System, removing inconsistent manual headers from pages like Payment and
+                    Order Status.</li>
+                <li>Now, the global <code>Navbar</code> seamlessly overlays these pages, providing a unified navigation
+                    experience across the entire app.</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>4. Issues Encountered & Solutions</h2>
+
+            <div class="issue-box">
+                <h4 class="issue-title">Issue 1: Stripe Signature Verification</h4>
+                <p>I ran into a significant issue where Stripe's signature verification was failing. It turned out that
+                    Express was parsing the request body as JSON globally, but Stripe needs the raw buffer stream for
+                    verification.</p>
+                <p class="solution">Course of Action:</p>
+                <p>I reconfigured the server middleware to apply <code>express.raw</code> specifically to the webhook
+                    route before the global JSON parser. This resolved the verification errors immediately.</p>
+            </div>
+
+            <div class="issue-box">
+                <h4 class="issue-title">Issue 2: Header Layout Shifts</h4>
+                <p>When applying the global navbar to the Login page, it created an unwanted white gap at the top.</p>
+                <p class="solution">Course of Action:</p>
+                <p>I updated the <code>Navbar</code> component's logic to explicitly treat <code>/login</code> and other
+                    pages as "transparent overlay" routes, setting the spacer height to 0px. This fixed the layout
+                    shift.</p>
+            </div>
+
+        </section>
+
+        <section class="section">
+            <h2>5. Upcoming Work (Next Week)</h2>
+            <p>For the coming week, my focus will shift toward:</p>
+
+            <h3>A. Testing & Quality Assurance</h3>
+            <ul>
+                <li>Conducting end to end testing of the complete payment flow across multiple browsers</li>
+                <li>Writing unit tests for the webhook controller to ensure reliability</li>
+                <li>Performing security audits on authentication and payment endpoints</li>
+            </ul>
+
+            <h3>B. Improve administartion tools</h3>
+            <ul>
+                <li>Improve administartion tools</li>
+                <li>Test and debug</li>
+            </ul>
+
+        </section>
 
         <footer class="footer">
-            <p>&copy; 2025 Plnderer. Built with Glassmorphism.</p>
+            <p>Full Sail University | Project & Portfolio III | Team4</p>
+            <p>Computer Science - AI Concentration</p>
         </footer>
     </div>
     <script src="script.js"></script>
